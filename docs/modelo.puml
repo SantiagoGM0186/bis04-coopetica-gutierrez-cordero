@@ -1,0 +1,145 @@
+@startuml
+title CoopeTica R.L. - Diagrama de clases
+
+skinparam classAttributeIconSize 0
+
+package coopetica.modelo {
+
+    class Sucursal {
+        - codigo : String
+        - nombre : String
+        - asociados : ArrayList<Asociado>
+        + Sucursal(codigo : String, nombre : String)
+        + getCodigo() : String
+        + getNombre() : String
+        + setNombre(nombre : String) : void
+        + getAsociados() : ArrayList<Asociado>
+        + agregarAsociado(asociado : Asociado) : void
+        + toString() : String
+    }
+
+    class Asociado {
+        - cedula : String
+        - nombre : String
+        - numeroAsociado : String
+        - saldoAportes : double
+        - cuentas : ArrayList<Cuenta>
+        - prestamoActivo : Prestamo
+        + Asociado(cedula : String, nombre : String, numeroAsociado : String)
+        + getCedula() : String
+        + getNombre() : String
+        + setNombre(nombre : String) : void
+        + getNumeroAsociado() : String
+        + getSaldoAportes() : double
+        + depositarAporte(monto : double) : void
+        + retirarAporte(monto : double) : void
+        + getCuentas() : ArrayList<Cuenta>
+        + agregarCuenta(cuenta : Cuenta) : void
+        + getPrestamoActivo() : Prestamo
+        + asignarPrestamo(prestamo : Prestamo) : void
+        + tienePrestamoActivo() : boolean
+        + equals(objeto : Object) : boolean
+        + toString() : String
+    }
+
+    abstract class Cuenta {
+        - numeroCuenta : String
+        - saldo : double
+        + Cuenta(numeroCuenta : String, saldoInicial : double)
+        + getNumeroCuenta() : String
+        + getSaldo() : double
+        # setSaldo(saldo : double) : void
+        + depositar(monto : double) : void
+        + {abstract} retirar(monto : double) : void
+        + toString() : String
+    }
+
+    class CuentaAhorro {
+        + CuentaAhorro(numeroCuenta : String, saldoInicial : double)
+        + retirar(monto : double) : void
+        + toString() : String
+    }
+
+    class CuentaCorriente {
+        - limiteSobregiro : double
+        + CuentaCorriente(numeroCuenta : String, saldoInicial : double, limiteSobregiro : double)
+        + getLimiteSobregiro() : double
+        + retirar(monto : double) : void
+        + toString() : String
+    }
+
+    class Prestamo {
+        - numeroPrestamo : String
+        - monto : double
+        - plazoMeses : int
+        - fechaSolicitud : LocalDate
+        - activo : boolean
+        - cuotas : ArrayList<Cuota>
+        + Prestamo(numeroPrestamo : String, monto : double, plazoMeses : int, fechaSolicitud : LocalDate, estrategia : EstrategiaInteres)
+        + getNumeroPrestamo() : String
+        + getMonto() : double
+        + getPlazoMeses() : int
+        + getFechaSolicitud() : LocalDate
+        + estaActivo() : boolean
+        + getCuotas() : ArrayList<Cuota>
+        + pagarCuota(numeroCuota : int) : void
+        + anular() : void
+        + toString() : String
+    }
+
+    class Cuota {
+        - numeroCuota : int
+        - monto : double
+        - fechaVencimiento : LocalDate
+        - pagada : boolean
+        + Cuota(numeroCuota : int, monto : double, fechaVencimiento : LocalDate)
+        + getNumeroCuota() : int
+        + getMonto() : double
+        + getFechaVencimiento() : LocalDate
+        + estaPagada() : boolean
+        + marcarPagada() : void
+        + toString() : String
+    }
+}
+
+package coopetica.logica {
+
+    interface EstrategiaInteres {
+        + calcularInteres(monto : double, plazoMeses : int) : double
+    }
+
+    class InteresSimple {
+        - tasaAnual : double
+        + InteresSimple(tasaAnual : double)
+        + calcularInteres(monto : double, plazoMeses : int) : double
+    }
+
+    class InteresFijo {
+        - porcentaje : double
+        + InteresFijo(porcentaje : double)
+        + calcularInteres(monto : double, plazoMeses : int) : double
+    }
+}
+
+package coopetica.datos {
+
+    class GestorPersistencia <<Singleton>> {
+        - {static} instancia : GestorPersistencia
+        - GestorPersistencia()
+        + {static} getInstancia() : GestorPersistencia
+    }
+}
+
+Sucursal "1" o-- "0..*" Asociado : agrupa
+Asociado "1" --> "0..*" Cuenta : tiene
+Asociado "1" --> "0..1" Prestamo : prestamo activo
+Prestamo "1" *-- "1..*" Cuota : genera
+Prestamo ..> EstrategiaInteres : usa para calcular cuotas
+
+Cuenta <|-- CuentaAhorro
+Cuenta <|-- CuentaCorriente
+
+EstrategiaInteres <|.. InteresSimple
+EstrategiaInteres <|.. InteresFijo
+
+@enduml
