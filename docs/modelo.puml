@@ -76,6 +76,7 @@ package coopetica.modelo {
         - activo : boolean
         - cuotas : ArrayList<Cuota>
         + Prestamo(numeroPrestamo : String, monto : double, plazoMeses : int, fechaSolicitud : LocalDate, estrategia : EstrategiaInteres)
+        - generarCuotas(estrategia : EstrategiaInteres) : void
         + getNumeroPrestamo() : String
         + getMonto() : double
         + getPlazoMeses() : int
