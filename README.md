@@ -7,7 +7,7 @@ Proyecto Programado del curso BIS04 Programación II, Universidad Latina de Cost
 | Nombre | Carné |
 |---|---|
 | Santiago Gutiérrez Monge | 2006020225 |
-| Sofía Cordero | (pendiente) |
+| Sofía Cordero | 202401111586 |
 
 ## Descripción
 
